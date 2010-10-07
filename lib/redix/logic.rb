@@ -83,7 +83,7 @@ module Redix
         @u.lineEdit.clear
         puts "Exec #{comm}"
         res = eval("r.#{comm}") rescue "FAIL"
-        @u.textBrowser.setHtml(res)# += res
+        @u.textBrowser.setHtml("=> #{res}")# += res
 
       rescue Exception => e
         @u.textBrowser.setHtml e.to_s
@@ -91,9 +91,9 @@ module Redix
 
       def zoom(i)
         key = i.text
-        @u.tableView.model = DataModel.new.for(key)
+        model = DataModel.new.for(key)
+        @u.tableView.model = model
         @u.tableView.setColumnWidth(0, 400)
-
       end
     end
 
@@ -103,10 +103,11 @@ module Redix
 
   end
 
-  class DataModel < Qt::AbstractListModel
+  class DataModel < Qt::AbstractTableModel
 
     def for(key)
       r = Logic.r
+      @key = key
       @type = r.type(key)
       @data = case @type
       when "string" then r.get(key)
@@ -125,14 +126,34 @@ module Redix
       self
     end
 
-    def rowCount idx
+    def flags(arg=nil)
+      Qt::ItemIsEditable|Qt::ItemIsEnabled
+    end
+
+    def rowCount idx=nil
       @rows.size
+    end
+
+    def columnCount idx=nil
+      1
     end
 
     def data idx, role = Qt::DisplayRole
       if role == Qt::DisplayRole then Qt::Variant.new @rows[idx.row]
       else Qt::Variant.new
       end
+    end
+
+    def setData(mid, var, *args)
+      p "SETDATA"
+      Logic.r.set(@key, var.toString)
+      self.for(@key)
+      p args
+
+    end
+
+    def setHeaderData(*args)
+      p args
     end
 
     def headerData sec, orient, role = Qt::DisplayRole
