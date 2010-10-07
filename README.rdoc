@@ -1,9 +1,37 @@
 = redix
 
-Description goes here.
+Simple (a night playing with qt) GUI for Redis
+
+
+== Install
+
+As rubygem:
+
+    gem install redix
+
+This should work on KDE/OSX. For other linux WM:
+
+    gem install qtbindings
+
+
+== Use
+
+Just run 'redix'.
+
+Some nice soul will eventually fork and add icons and nix* pkging ;)
+
+
+== To Do
+
+* Improve Experience
+* Screenshots
+* Edit inline
+* Backup/Clone
+* Stats
+
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a

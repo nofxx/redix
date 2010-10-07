@@ -52,7 +52,8 @@ module Redix
       def about_dialog
         a = AboutDialog.new
         a.setupUi
-        a.title.setText("RediX")
+        # a.title.setText("RediX")
+        a.textBrowser.setHtml("About <a href='http://github.com/nofxx/redix'>Redix</a>....")
         a.show
       end
 

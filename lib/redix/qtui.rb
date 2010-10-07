@@ -187,19 +187,34 @@ end
 class AboutDialog < Qt::Dialog
   attr_reader :data
   attr_reader :title
-  attr_reader :text
+  attr_reader :textBrowser
 
 
   def updateData(new)
     @data = new
   end
-  def setupUi(dialog = self)
 
+  def setupUi(dialog = self)
+    dialog.resize(400, 300)
+    @pushButton = Qt::PushButton.new(dialog)
+    @pushButton.objectName = "pushButton"
+    @pushButton.geometry = Qt::Rect.new(290, 260, 89, 27)
     @title = Qt::Label.new(dialog)
     @title.objectName = "title"
-    @title.geometry = Qt::Rect.new(20, 23, 61, 21)
+    @title.geometry = Qt::Rect.new(40, 20, 311, 31)
+    @font = Qt::Font.new
+    @font.family = "Verdana"
+    @font.pointSize = 26
+    @title.font = @font
+    @title.alignment = Qt::AlignCenter
+    @textBrowser = Qt::TextBrowser.new(dialog)
+    @textBrowser.objectName = "textBrowser"
+    @textBrowser.geometry = Qt::Rect.new(20, 80, 361, 151)
+
 
     retranslateUi(dialog)
+    Qt::Object.connect(@pushButton, SIGNAL('clicked()'), dialog, SLOT('accept()'))
+
     Qt::MetaObject.connectSlotsByName(dialog)
   end # setupUi
 
@@ -209,6 +224,8 @@ class AboutDialog < Qt::Dialog
 
   def retranslateUi(dialog)
     dialog.windowTitle = Qt::Application.translate("Dialog", "About", nil, Qt::Application::UnicodeUTF8)
+    @pushButton.text = Qt::Application.translate("Dialog", "Close", nil, Qt::Application::UnicodeUTF8)
+    @title.text = Qt::Application.translate("Dialog", "RediX v0.0.1", nil, Qt::Application::UnicodeUTF8)
   end # retranslateUi
 
   def retranslate_ui(dialog)
