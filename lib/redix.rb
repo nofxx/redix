@@ -3,11 +3,11 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 require 'Qt4'
 require 'redis'
 # APP
-require 'reguis/logic'
-require 'reguis/qtui'
+require 'redix/logic'
+require 'redix/qtui'
 
 
-module Reguis
+module Redix
 
   App = Qt::Application.new(ARGV)
 
@@ -24,4 +24,4 @@ module Reguis
 end
 
 puts "Starting GUI"
-Reguis.boot!
+Redix.boot!

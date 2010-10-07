@@ -105,7 +105,7 @@ class Ui_MainWindow
   end
 
   def retranslateUi(mainWindow)
-    mainWindow.windowTitle = Qt::Application.translate("MainWindow", "Reguis", nil, Qt::Application::UnicodeUTF8)
+    mainWindow.windowTitle = Qt::Application.translate("MainWindow", "Redix", nil, Qt::Application::UnicodeUTF8)
     @actionNew.text = Qt::Application.translate("MainWindow", "New", nil, Qt::Application::UnicodeUTF8)
     @actionOpen.text = Qt::Application.translate("MainWindow", "Open", nil, Qt::Application::UnicodeUTF8)
     @actionQuit.text = Qt::Application.translate("MainWindow", "Quit", nil, Qt::Application::UnicodeUTF8)

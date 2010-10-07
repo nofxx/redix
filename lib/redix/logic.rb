@@ -1,5 +1,5 @@
 
-module Reguis
+module Redix
 
   class Logic
 
