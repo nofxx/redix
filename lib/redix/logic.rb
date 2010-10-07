@@ -86,6 +86,8 @@ module Redix
       def zoom(i)
         key = i.text
         @u.tableView.model = DataModel.new.for(key)
+        @u.tableView.setColumnWidth(0, 400)
+
       end
     end
 
@@ -106,12 +108,12 @@ module Redix
       when "set" then r.smembers(key)
       else r.sort(key)
       end
-      if @data.respond_to?(:values)
+      if @data.kind_of?(Hash)
         @rows = @data.values
         @header = @data.keys
       else
-        @rows = [@data]
-        @header = [@type]
+        @rows = @data.kind_of?(Array) ? @data : [@data]
+        @header = (0..@rows.size).to_a
       end
 
       self

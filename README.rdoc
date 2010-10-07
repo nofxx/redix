@@ -13,6 +13,8 @@ This should work on KDE/OSX. For other linux WM:
 
     gem install qtbindings
 
+http://github.com/ryanmelt/qtbindings
+
 
 == Use
 
