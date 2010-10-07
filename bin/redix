@@ -1,9 +1,10 @@
-#!/bin/sh
-
-$(dirname $0)/../lib/redix.rb $*
-
-# RUBY VERSION:
 #!/usr/bin/env ruby
-# $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-# require 'redix'
-# Redix.boot!
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'rubygems' if RUBY_VERSION < "1.9"
+require 'redix'
+
+# SH version (jeweler or rubygems overwrites....)
+#!/bin/sh
+#
+#$(dirname $0)/../lib/redix.rb $*
+
