@@ -1,0 +1,9 @@
+#!/bin/sh
+
+$(dirname $0)/../lib/reguis.rb $*
+
+# RUBY VERSION:
+#!/usr/bin/env ruby
+# $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+# require 'reguis'
+# Reguis.boot!
