@@ -4,6 +4,7 @@ begin
 require 'Qt4'
 rescue LoadError
   puts "QT Bindings not found, try `gem install qtbindings`."
+  exit
 end
 require 'redis'
 # APP
