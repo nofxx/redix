@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
+begin
 require 'Qt4'
+rescue LoadError
+  puts "QT Bindings not found, try `gem install qtbindings`."
+end
 require 'redis'
 # APP
 require 'redix/logic'

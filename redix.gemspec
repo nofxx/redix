@@ -22,11 +22,13 @@ Gem::Specification.new do |s|
      ".gitignore",
      "README.rdoc",
      "Rakefile",
+     "VERSION",
      "bin/redix",
      "lib/redix.rb",
      "lib/redix/logic.rb",
      "lib/redix/qtui.rb",
      "lib/redix/redisd.rb",
+     "redix.gemspec",
      "spec/redix_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"

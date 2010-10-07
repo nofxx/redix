@@ -24,6 +24,7 @@ Some nice soul will eventually fork and add icons and nix* pkging ;)
 == To Do
 
 * Improve Experience
+* Fluid Layout?
 * Screenshots
 * Edit inline
 * Backup/Clone
