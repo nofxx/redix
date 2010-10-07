@@ -37,6 +37,9 @@ module Redix
       def build_keys
         @u.listWidget.clear
         @u.listWidget.addItems(r.keys.sort)
+        rescue
+        failure  "Could not conect to redis"
+
       end
 
       def connect_dialog
@@ -79,8 +82,11 @@ module Redix
         comm = @u.lineEdit.text
         @u.lineEdit.clear
         puts "Exec #{comm}"
-        res = eval("r.#{comm}")
+        res = eval("r.#{comm}") rescue "FAIL"
         @u.textBrowser.setHtml(res)# += res
+
+      rescue Exception => e
+        @u.textBrowser.setHtml e.to_s
       end
 
       def zoom(i)
