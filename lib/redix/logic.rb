@@ -61,10 +61,17 @@ module Redix
         a.show
       end
 
+      def new_key
+        k = NewKeyDialog.new
+        k.setupUi
+        k.show
+      end
+
       def for(u)
         @u = u
         build_keys
         build_dbs
+        u.actionNew.connect(SIGNAL('triggered()')) { new_key }
         u.actionConnect.connect(SIGNAL('triggered()')) { connect }
         u.actionReconnect.connect(SIGNAL('triggered()')) { reconnect }
         u.actionAbout.connect(SIGNAL('triggered()')) { help }

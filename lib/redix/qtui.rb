@@ -5,27 +5,13 @@
 #
 #
 class Ui_MainWindow < Qt::MainWindow
-  attr_reader :actionNew
-  attr_reader :actionOpen
-  attr_reader :actionQuit
-  attr_reader :actionReconnect
-  attr_reader :actionConnect
-  attr_reader :actionHomepage
-  attr_reader :actionAbout
-  attr_reader :centralwidget
-  attr_reader :listWidget
-  attr_reader :tableView
-  attr_reader :lineEdit
-  attr_reader :textBrowser
-  attr_reader :menubar
-  attr_reader :menuFile
-  attr_reader :menuDB
-  attr_reader :menuChange
-  attr_reader :menuHelp
-  attr_reader :statusbar
-  attr_reader :mainWindow
+  attr_reader :actionNew, :actionOpen, :actionQuit, :actionReconnect, :actionConnect
+  attr_reader :actionHomepage, :actionAbout, :centralwidget, :listWidget
+  attr_reader :tableView, :lineEdit, :textBrowser
+  attr_reader :menubar, :menuKey, :menuDB, :menuChange, :menuHelp
+  attr_reader :statusbar, :mainWindow
 
-  slots :reload, :help, :connect
+  slots :reload, :help, :connect, :new_key
 
   def setupUi #(self)
     if self.objectName.nil?
@@ -35,6 +21,8 @@ class Ui_MainWindow < Qt::MainWindow
     self.resize(799, 606)
     @actionNew = Qt::Action.new(self)
     @actionNew.objectName = "actionNew"
+    @actionInfo = Qt::Action.new(self)
+    @actionInfo.objectName = "actionInfo"
     @actionOpen = Qt::Action.new(self)
     @actionOpen.objectName = "actionOpen"
     @actionQuit = Qt::Action.new(self)
@@ -71,8 +59,8 @@ class Ui_MainWindow < Qt::MainWindow
     @menubar = Qt::MenuBar.new(self)
     @menubar.objectName = "menubar"
     @menubar.geometry = Qt::Rect.new(0, 0, 799, 26)
-    @menuFile = Qt::Menu.new(@menubar)
-    @menuFile.objectName = "menuFile"
+    @menuKey = Qt::Menu.new(@menubar)
+    @menuKey.objectName = "menuKey"
     @menuDB = Qt::Menu.new(@menubar)
     @menuDB.objectName = "menuDB"
     @menuChange = Qt::Menu.new(@menuDB)
@@ -84,17 +72,18 @@ class Ui_MainWindow < Qt::MainWindow
     @statusbar.objectName = "statusbar"
     self.statusBar = @statusbar
 
-    @menubar.addAction(@menuFile.menuAction())
     @menubar.addAction(@menuDB.menuAction())
+    @menubar.addAction(@menuKey.menuAction())
     @menubar.addAction(@menuHelp.menuAction())
-    @menuFile.addAction(@actionNew)
-    @menuFile.addAction(@actionOpen)
-    @menuFile.addSeparator()
-    @menuFile.addAction(@actionQuit)
+    @menuDB.addAction(@actionOpen)
     @menuDB.addAction(@menuChange.menuAction())
     @menuDB.addAction(@actionConnect)
     @menuDB.addAction(@actionReconnect)
     @menuDB.addSeparator()
+    @menuDB.addAction(@actionQuit)
+    @menuKey.addAction(@actionNew)
+    @menuKey.addAction(@actionInfo)
+    @menuKey.addSeparator()
     @menuHelp.addAction(@actionHomepage)
     @menuHelp.addSeparator()
     @menuHelp.addAction(@actionAbout)
@@ -104,6 +93,7 @@ class Ui_MainWindow < Qt::MainWindow
 
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_C.to_i), self, SLOT('connect()'))
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F1.to_i), self, SLOT('help()'))
+    Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F2.to_i), self, SLOT('new_key()'))
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F5.to_i), self, SLOT('reload()'))
 
     Qt::MetaObject.connectSlotsByName(self)
@@ -111,6 +101,10 @@ class Ui_MainWindow < Qt::MainWindow
 
   def connect
     Redix::Logic.connect_dialog
+  end
+
+  def new_key
+    Redix::Logic.new_key
   end
 
   def reload
@@ -128,6 +122,7 @@ class Ui_MainWindow < Qt::MainWindow
   def retranslateUi
     self.windowTitle = Qt::Application.translate("MainWindow", "Redix", nil, Qt::Application::UnicodeUTF8)
     @actionNew.text = Qt::Application.translate("MainWindow", "New", nil, Qt::Application::UnicodeUTF8)
+    @actionInfo.text = Qt::Application.translate("MainWindow", "Info", nil, Qt::Application::UnicodeUTF8)
     @actionOpen.text = Qt::Application.translate("MainWindow", "Open", nil, Qt::Application::UnicodeUTF8)
     @actionQuit.text = Qt::Application.translate("MainWindow", "Quit", nil, Qt::Application::UnicodeUTF8)
     @actionConnect.text = Qt::Application.translate("MainWindow", "Connect", nil, Qt::Application::UnicodeUTF8)
@@ -135,7 +130,7 @@ class Ui_MainWindow < Qt::MainWindow
     @actionHomepage.text = Qt::Application.translate("MainWindow", "Homepage", nil, Qt::Application::UnicodeUTF8)
     @actionAbout.text = Qt::Application.translate("MainWindow", "About", nil, Qt::Application::UnicodeUTF8)
     @lineEdit.toolTip = Qt::Application.translate("MainWindow", "Run commands", nil, Qt::Application::UnicodeUTF8)
-    @menuFile.title = Qt::Application.translate("MainWindow", "File", nil, Qt::Application::UnicodeUTF8)
+    @menuKey.title = Qt::Application.translate("MainWindow", "Key", nil, Qt::Application::UnicodeUTF8)
     @menuDB.title = Qt::Application.translate("MainWindow", "DB", nil, Qt::Application::UnicodeUTF8)
     @menuChange.title = Qt::Application.translate("MainWindow", "Change", nil, Qt::Application::UnicodeUTF8)
     @menuHelp.title = Qt::Application.translate("MainWindow", "Help", nil, Qt::Application::UnicodeUTF8)
@@ -143,6 +138,61 @@ class Ui_MainWindow < Qt::MainWindow
 
   def retranslate_ui
     retranslateUi
+  end
+
+end
+
+
+class NewKeyDialog < Qt::Dialog
+  attr_reader :data
+  attr_reader :buttonBox
+  attr_reader :input_name
+  attr_reader :input_type
+
+
+  def updateData(new)
+    @data = new
+  end
+  def setupUi(dialog = self)
+
+    @buttonBox = Qt::DialogButtonBox.new(dialog)
+    @buttonBox.objectName = "buttonBox"
+    @buttonBox.geometry = Qt::Rect.new(30, 100, 341, 32)
+    @buttonBox.orientation = Qt::Horizontal
+    @buttonBox.standardButtons = Qt::DialogButtonBox::Cancel|Qt::DialogButtonBox::Ok
+    @input_name = Qt::LineEdit.new(dialog)
+    @input_name.objectName = "input_name"
+    @input_name.geometry = Qt::Rect.new(70, 20, 311, 22)
+    @label = Qt::Label.new(dialog)
+    @label.objectName = "label"
+    @label.geometry = Qt::Rect.new(20, 23, 61, 21)
+
+    @input_type = Qt::LineEdit.new(dialog)
+    @input_type.objectName = "input_type"
+    @input_type.geometry = Qt::Rect.new(70, 50, 311, 22)
+    @label_type = Qt::Label.new(dialog)
+    @label_type.objectName = "label_type"
+    @label_type.geometry = Qt::Rect.new(20, 53, 61, 21)
+
+    retranslateUi(dialog)
+    Qt::Object.connect(@buttonBox, SIGNAL('accepted()'), dialog, SLOT('accept()'))
+    Qt::Object.connect(@buttonBox, SIGNAL('rejected()'), dialog, SLOT('reject()'))
+
+    Qt::MetaObject.connectSlotsByName(dialog)
+  end # setupUi
+
+  def setup_ui(dialog)
+    setupUi(dialog)
+  end
+
+  def retranslateUi(dialog)
+    dialog.windowTitle = Qt::Application.translate("Dialog", "New Key", nil, Qt::Application::UnicodeUTF8)
+    @label.text = Qt::Application.translate("Dialog", "Name", nil, Qt::Application::UnicodeUTF8)
+    @label_type.text = Qt::Application.translate("Dialog", "Type", nil, Qt::Application::UnicodeUTF8)
+  end # retranslateUi
+
+  def retranslate_ui(dialog)
+    retranslateUi(dialog)
   end
 
 end
