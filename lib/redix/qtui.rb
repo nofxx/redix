@@ -4,7 +4,7 @@
 #
 #
 #
-class Ui_MainWindow
+class Ui_MainWindow < Qt::MainWindow
   attr_reader :actionNew
   attr_reader :actionOpen
   attr_reader :actionQuit
@@ -25,30 +25,32 @@ class Ui_MainWindow
   attr_reader :statusbar
   attr_reader :mainWindow
 
-  def setupUi(mainWindow)
-    if mainWindow.objectName.nil?
-      mainWindow.objectName = "mainWindow"
+  slots :reload, :help, :connect
+
+  def setupUi #(self)
+    if self.objectName.nil?
+      self.objectName = "mainWindow"
     end
-    @mainWindow = mainWindow
-    mainWindow.resize(799, 606)
-    @actionNew = Qt::Action.new(mainWindow)
+    @mainWindow = self
+    self.resize(799, 606)
+    @actionNew = Qt::Action.new(self)
     @actionNew.objectName = "actionNew"
-    @actionOpen = Qt::Action.new(mainWindow)
+    @actionOpen = Qt::Action.new(self)
     @actionOpen.objectName = "actionOpen"
-    @actionQuit = Qt::Action.new(mainWindow)
+    @actionQuit = Qt::Action.new(self)
     @actionQuit.objectName = "actionQuit"
 
-    @actionConnect = Qt::Action.new(mainWindow)
+    @actionConnect = Qt::Action.new(self)
     @actionConnect.objectName = "actionConnect"
-    @actionReconnect = Qt::Action.new(mainWindow)
+    @actionReconnect = Qt::Action.new(self)
     @actionReconnect.objectName = "actionReconnect"
 
-    @actionHomepage = Qt::Action.new(mainWindow)
+    @actionHomepage = Qt::Action.new(self)
     @actionHomepage.objectName = "actionHomepage"
-    @actionAbout = Qt::Action.new(mainWindow)
+    @actionAbout = Qt::Action.new(self)
     @actionAbout.objectName = "actionAbout"
 
-    @centralwidget = Qt::Widget.new(mainWindow)
+    @centralwidget = Qt::Widget.new(self)
     @centralwidget.objectName = "centralwidget"
     @listWidget = Qt::ListWidget.new(@centralwidget)
     @listWidget.objectName = "listWidget"
@@ -57,14 +59,16 @@ class Ui_MainWindow
     @tableView.objectName = "tableView"
     @tableView.geometry = Qt::Rect.new(260, 10, 531, 441)
     @tableView.gridStyle = Qt::DotLine
+
     @lineEdit = Qt::LineEdit.new(@centralwidget)
     @lineEdit.objectName = "lineEdit"
     @lineEdit.geometry = Qt::Rect.new(260, 510, 531, 31)
     @textBrowser = Qt::TextBrowser.new(@centralwidget)
     @textBrowser.objectName = "textBrowser"
     @textBrowser.geometry = Qt::Rect.new(260, 460, 531, 41)
-    mainWindow.centralWidget = @centralwidget
-    @menubar = Qt::MenuBar.new(mainWindow)
+    self.centralWidget = @centralwidget
+
+    @menubar = Qt::MenuBar.new(self)
     @menubar.objectName = "menubar"
     @menubar.geometry = Qt::Rect.new(0, 0, 799, 26)
     @menuFile = Qt::Menu.new(@menubar)
@@ -75,10 +79,10 @@ class Ui_MainWindow
     @menuChange.objectName = "menuChange"
     @menuHelp = Qt::Menu.new(@menubar)
     @menuHelp.objectName = "menuHelp"
-    mainWindow.setMenuBar(@menubar)
-    @statusbar = Qt::StatusBar.new(mainWindow)
+    self.setMenuBar(@menubar)
+    @statusbar = Qt::StatusBar.new(self)
     @statusbar.objectName = "statusbar"
-    mainWindow.statusBar = @statusbar
+    self.statusBar = @statusbar
 
     @menubar.addAction(@menuFile.menuAction())
     @menubar.addAction(@menuDB.menuAction())
@@ -95,17 +99,34 @@ class Ui_MainWindow
     @menuHelp.addSeparator()
     @menuHelp.addAction(@actionAbout)
 
-    retranslateUi(mainWindow)
 
-    Qt::MetaObject.connectSlotsByName(mainWindow)
+    retranslateUi
+
+    Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_C.to_i), self, SLOT('connect()'))
+    Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F1.to_i), self, SLOT('help()'))
+    Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F5.to_i), self, SLOT('reload()'))
+
+    Qt::MetaObject.connectSlotsByName(self)
   end # setupUi
 
-  def setup_ui(mainWindow)
-    setupUi(mainWindow)
+  def connect
+    Redix::Logic.connect_dialog
   end
 
-  def retranslateUi(mainWindow)
-    mainWindow.windowTitle = Qt::Application.translate("MainWindow", "Redix", nil, Qt::Application::UnicodeUTF8)
+  def reload
+    Redix::Logic.reconnect
+  end
+
+  def help
+    Redix::Logic.about_dialog
+  end
+
+  def setup_ui
+    setupUi
+  end
+
+  def retranslateUi
+    self.windowTitle = Qt::Application.translate("MainWindow", "Redix", nil, Qt::Application::UnicodeUTF8)
     @actionNew.text = Qt::Application.translate("MainWindow", "New", nil, Qt::Application::UnicodeUTF8)
     @actionOpen.text = Qt::Application.translate("MainWindow", "Open", nil, Qt::Application::UnicodeUTF8)
     @actionQuit.text = Qt::Application.translate("MainWindow", "Quit", nil, Qt::Application::UnicodeUTF8)
@@ -120,8 +141,8 @@ class Ui_MainWindow
     @menuHelp.title = Qt::Application.translate("MainWindow", "Help", nil, Qt::Application::UnicodeUTF8)
   end # retranslateUi
 
-  def retranslate_ui(mainWindow)
-    retranslateUi(mainWindow)
+  def retranslate_ui
+    retranslateUi
   end
 
 end

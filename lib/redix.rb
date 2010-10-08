@@ -1,7 +1,11 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 begin
-require 'Qt4'
+  begin
+    require 'Qt4'
+  rescue LoadError
+    require 'korundum4'
+  end
 rescue LoadError
   puts "QT Bindings not found, try `gem install qtbindings`."
   exit
@@ -18,10 +22,10 @@ module Redix
 
   def self.boot!
     u = Ui_MainWindow.new
-    w = Qt::MainWindow.new
-    u.setupUi(w)
+ #   w = Qt::MainWindow.new
+    u.setupUi #(w)
     Logic.for(u)
-    w.show
+    u.show
     App.exec
   end
 
