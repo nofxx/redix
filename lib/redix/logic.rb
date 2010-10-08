@@ -1,7 +1,8 @@
 
 module Redix
 
-  class Logic
+  class Logic #< Qt::Widget =/
+    #slots :reload, :help, :connect
 
     class << self
 
@@ -42,7 +43,7 @@ module Redix
 
       end
 
-      def connect_dialog
+      def connect
         c = ConnectDialog.new
         c.setupUi
         redis = "#{r.client.host}:#{r.client.port}/#{r.client.db}"
@@ -52,7 +53,7 @@ module Redix
         c.show
       end
 
-      def about_dialog
+      def help
         a = AboutDialog.new
         a.setupUi
         # a.title.setText("RediX")
@@ -64,9 +65,9 @@ module Redix
         @u = u
         build_keys
         build_dbs
-        u.actionConnect.connect(SIGNAL('triggered()')) { connect_dialog }
+        u.actionConnect.connect(SIGNAL('triggered()')) { connect }
         u.actionReconnect.connect(SIGNAL('triggered()')) { reconnect }
-        u.actionAbout.connect(SIGNAL('triggered()')) { about_dialog }
+        u.actionAbout.connect(SIGNAL('triggered()')) { help }
         u.actionQuit.connect(SIGNAL('triggered()'), App, SLOT('quit()'))
 
         # Qt::ListWidgetItem.new(u.listWidget)
@@ -145,11 +146,20 @@ module Redix
     end
 
     def setData(mid, var, *args)
-      p "SETDATA"
-      Logic.r.set(@key, var.toString)
-      self.for(@key)
+      p "SETDATA #{mid} | #{var}"
+      p mid
+      r = Logic.r
+      t = var.toString
+      case @type
+      when 'string' then r.set(@key, t)
+      when 'hash' then r.hset(@key, @header[mid.row], t)
+      when 'list' then r.lset(@key, mid.row, t)
+      when 'set'
+        r.srem(@key, @rows[mid.row])
+        r.sadd(@key, t)
+      end
       p args
-
+      self.for(@key)
     end
 
     def setHeaderData(*args)
