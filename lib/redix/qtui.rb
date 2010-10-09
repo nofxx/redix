@@ -142,37 +142,55 @@ class Ui_MainWindow < Qt::MainWindow
 
 end
 
-
+#
+#
+#  New Key
+#
+#
+#
 class NewKeyDialog < Qt::Dialog
   attr_reader :data
   attr_reader :buttonBox
   attr_reader :input_name
   attr_reader :input_type
+  attr_reader :input_value
 
 
   def updateData(new)
     @data = new
   end
+
   def setupUi(dialog = self)
 
     @buttonBox = Qt::DialogButtonBox.new(dialog)
     @buttonBox.objectName = "buttonBox"
-    @buttonBox.geometry = Qt::Rect.new(30, 100, 341, 32)
+    @buttonBox.geometry = Qt::Rect.new(30, 130, 341, 32)
     @buttonBox.orientation = Qt::Horizontal
     @buttonBox.standardButtons = Qt::DialogButtonBox::Cancel|Qt::DialogButtonBox::Ok
-    @input_name = Qt::LineEdit.new(dialog)
-    @input_name.objectName = "input_name"
-    @input_name.geometry = Qt::Rect.new(70, 20, 311, 22)
-    @label = Qt::Label.new(dialog)
-    @label.objectName = "label"
-    @label.geometry = Qt::Rect.new(20, 23, 61, 21)
 
-    @input_type = Qt::LineEdit.new(dialog)
+    @input_type = Qt::ComboBox.new(dialog)
     @input_type.objectName = "input_type"
-    @input_type.geometry = Qt::Rect.new(70, 50, 311, 22)
+    @input_type.geometry = Qt::Rect.new(70, 20, 311, 22)
+    @input_type.addItems(["string", "list", "set", "zset", "hash", "channel"])
     @label_type = Qt::Label.new(dialog)
     @label_type.objectName = "label_type"
-    @label_type.geometry = Qt::Rect.new(20, 53, 61, 21)
+    @label_type.geometry = Qt::Rect.new(20, 23, 61, 21)
+
+
+    @input_name = Qt::LineEdit.new(dialog)
+    @input_name.objectName = "input_name"
+    @input_name.geometry = Qt::Rect.new(70, 50, 311, 22)
+    @label = Qt::Label.new(dialog)
+    @label.objectName = "label"
+    @label.geometry = Qt::Rect.new(20, 53, 61, 21)
+
+    @input_value = Qt::LineEdit.new(dialog)
+    @input_value.objectName = "input_value"
+    @input_value.geometry = Qt::Rect.new(70, 80, 311, 22)
+    @label_value = Qt::Label.new(dialog)
+    @label_value.objectName = "label_value"
+    @label_value.geometry = Qt::Rect.new(20, 83, 61, 21)
+
 
     retranslateUi(dialog)
     Qt::Object.connect(@buttonBox, SIGNAL('accepted()'), dialog, SLOT('accept()'))
@@ -189,6 +207,7 @@ class NewKeyDialog < Qt::Dialog
     dialog.windowTitle = Qt::Application.translate("Dialog", "New Key", nil, Qt::Application::UnicodeUTF8)
     @label.text = Qt::Application.translate("Dialog", "Name", nil, Qt::Application::UnicodeUTF8)
     @label_type.text = Qt::Application.translate("Dialog", "Type", nil, Qt::Application::UnicodeUTF8)
+    @label_value.text = Qt::Application.translate("Dialog", "Value", nil, Qt::Application::UnicodeUTF8)
   end # retranslateUi
 
   def retranslate_ui(dialog)
@@ -197,6 +216,12 @@ class NewKeyDialog < Qt::Dialog
 
 end
 
+#
+#
+#  Connect
+#
+#
+#
 class ConnectDialog < Qt::Dialog
   attr_reader :data
   attr_reader :buttonBox
@@ -254,7 +279,12 @@ class ConnectDialog < Qt::Dialog
 
 end
 
-
+#
+#
+#  About
+#
+#
+#
 class AboutDialog < Qt::Dialog
   attr_reader :data
   attr_reader :title

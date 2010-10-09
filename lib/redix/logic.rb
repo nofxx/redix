@@ -1,8 +1,8 @@
 
 module Redix
 
-  class Logic #< Qt::Widget =/
-    #slots :reload, :help, :connect
+  class Logic < Qt::Object # =/
+    slots :reload, :help, :connect
 
     class << self
 
@@ -64,7 +64,23 @@ module Redix
       def new_key
         k = NewKeyDialog.new
         k.setupUi
+        k.buttonBox.connect(SIGNAL('accepted()')) { create_key(k) }
         k.show
+      end
+
+      def create_key(k, type = nil, v = nil)
+
+        unless type
+          type = k.input_type.current_text
+          v = k.input_value.text
+          k = k.input_name.text
+        end
+        case type
+        when 'string' then r.set(k, v)
+        when 'hash' then r.hmset(k, v)
+        when 'list' then r.add(k, v)
+        when 'set' then  r.sadd(k, v)
+        end
       end
 
       def for(u)
