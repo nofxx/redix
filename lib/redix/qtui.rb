@@ -10,8 +10,10 @@ class Ui_MainWindow < Qt::MainWindow
   attr_reader :tableView, :lineEdit, :textBrowser
   attr_reader :menubar, :menuKey, :menuDB, :menuChange, :menuHelp
   attr_reader :statusbar, :mainWindow
+  KEYS = (0..9)
 
   slots :reload, :help, :connect, :new_key
+  eval(("slots " + (KEYS.map { |i| ":connect#{i}" }.join ", ")))
 
   def setupUi #(self)
     if self.objectName.nil?
@@ -91,7 +93,11 @@ class Ui_MainWindow < Qt::MainWindow
 
     retranslateUi
 
+    # 0-9 Keys Shortcuts
+    KEYS.each { |k| Qt::Shortcut.new(Qt::KeySequence.new(eval("Qt::Key_#{k}").to_i), self, SLOT("connect#{k}()")) }
+
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_C.to_i), self, SLOT('connect()'))
+    Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_N.to_i), self, SLOT('new_key()'))
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F1.to_i), self, SLOT('help()'))
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F2.to_i), self, SLOT('new_key()'))
     Qt::Shortcut.new(Qt::KeySequence.new(Qt::Key_F5.to_i), self, SLOT('reload()'))
@@ -99,12 +105,20 @@ class Ui_MainWindow < Qt::MainWindow
     Qt::MetaObject.connectSlotsByName(self)
   end # setupUi
 
-  def connect
-    Redix::Logic.connect_dialog
+  def connect(db = nil)
+    Redix::Logic.connect
   end
 
   def new_key
     Redix::Logic.new_key
+  end
+
+  def method_missing(*args)
+    if args.join =~ /^connect/
+      Redix::Logic.reconnect(args.join.scan(/\d/)[0].to_i)
+    else
+      super
+    end
   end
 
   def reload
@@ -112,7 +126,7 @@ class Ui_MainWindow < Qt::MainWindow
   end
 
   def help
-    Redix::Logic.about_dialog
+    Redix::Logic.help
   end
 
   def setup_ui
@@ -205,7 +219,7 @@ class NewKeyDialog < Qt::Dialog
 
   def retranslateUi(dialog)
     dialog.windowTitle = Qt::Application.translate("Dialog", "New Key", nil, Qt::Application::UnicodeUTF8)
-    @label.text = Qt::Application.translate("Dialog", "Name", nil, Qt::Application::UnicodeUTF8)
+    @label.text = Qt::Application.translate("Dialog", "Key", nil, Qt::Application::UnicodeUTF8)
     @label_type.text = Qt::Application.translate("Dialog", "Type", nil, Qt::Application::UnicodeUTF8)
     @label_value.text = Qt::Application.translate("Dialog", "Value", nil, Qt::Application::UnicodeUTF8)
   end # retranslateUi

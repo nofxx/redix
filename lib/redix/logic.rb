@@ -24,6 +24,7 @@ module Redix
       def failure(f)
         @u.statusbar.showMessage(f)
       end
+      alias :message :failure
 
       def build_dbs
         0.upto(15) do |i|
@@ -36,11 +37,13 @@ module Redix
       end
 
       def build_keys
+        all = r.keys.sort
         @u.listWidget.clear
-        @u.listWidget.addItems(r.keys.sort)
-        rescue
+        @u.listWidget.addItems(all)
+        puts r.info
+        message "DB Loaded #{all.size} keys. Used memory #{r.info['used_memory_human']}"
+      rescue
         failure  "Could not conect to redis"
-
       end
 
       def connect
@@ -57,7 +60,7 @@ module Redix
         a = AboutDialog.new
         a.setupUi
         # a.title.setText("RediX")
-        a.textBrowser.setHtml("About <a href='http://github.com/nofxx/redix'>Redix</a>....")
+        a.textBrowser.setHtml("About <a href='http://github.com/nofxx/redix'>Redix</a><p>Marcos Piccinini</p>")
         a.show
       end
 
@@ -169,24 +172,21 @@ module Redix
     end
 
     def setData(mid, var, *args)
-      p "SETDATA #{mid} | #{var}"
-      p mid
       r = Logic.r
-      t = var.toString
+      v = var.toString
       case @type
-      when 'string' then r.set(@key, t)
-      when 'hash' then r.hset(@key, @header[mid.row], t)
-      when 'list' then r.lset(@key, mid.row, t)
+      when 'string' then r.set(@key, v)
+      when 'hash' then r.hset(@key, @header[mid.row], v)
+      when 'list' then r.lset(@key, mid.row, v)
       when 'set'
         r.srem(@key, @rows[mid.row])
-        r.sadd(@key, t)
+        r.sadd(@key, v)
       end
-      p args
       self.for(@key)
     end
 
     def setHeaderData(*args)
-      p args
+      p "Set Header -> #{args}"
     end
 
     def headerData sec, orient, role = Qt::DisplayRole
