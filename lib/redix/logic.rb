@@ -6,16 +6,16 @@ module Redix
 
     class << self
 
-      def r(db = 0)
-        @r ||= Redis.new(:db => db)
+      def r(db = 0, host = REDIS_HOST, port = REDIS_PORT)
+        @r ||= Redis.new(:host => host, :db => db)
       rescue
-        failure("Can't find redis on localhost:6379")
+        failure("Can't find redis on #{host}:#{port}")
       end
 
       def reconnect(db = @db)
         puts "Reconnecting to DB ##{db}"
         params = db =~ /\./ ? { :url => "redis://#{db}" } : { :db => db }
-        @r = Redis.connect(params)
+        @r = Redis.connect(params.merge(:host => REDIS_HOST, :port => REDIS_PORT))
         build_keys
       rescue
         failure("Failure connecting to #{params}")

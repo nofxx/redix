@@ -20,10 +20,16 @@ module Redix
 
   App = Qt::Application.new(ARGV)
 
+  if ARGV[0]
+    REDIS_HOST, REDIS_PORT = ARGV[0] =~ /:/ ? ARGV[0].split(":") : [ARGV[0], 6379]
+  else
+    REDIS_HOST, REDIS_PORT = ['localhost', 6379]
+  end
+
   def self.boot!
     u = Ui_MainWindow.new
- #   w = Qt::MainWindow.new
-    u.setupUi #(w)
+    # w = Qt::MainWindow.new
+    u.setupUi
     Logic.for(u)
     u.show
     App.exec
